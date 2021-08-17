@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Window</title>
+</head>
+<body>
+  <canvas>
+    
+  </canvas>
+</body>
+<script type="text/v-shader">
+  attribute vec3 pos;
+  void main(void)
+  {
+    gl_Position = vec4(pos, 10.0);
+  }
+</script>
+<script type="text/f-shader">
+  void main(void)
+  {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  }
+</script>
+<script src="basicCube.json"></script>
+<script src="glBaseFunctions.js" type="text/javascript" charset="utf-8"></script>
+<script src="main.js" type="text/javascript" charset="utf-8"></script>
+</html>
