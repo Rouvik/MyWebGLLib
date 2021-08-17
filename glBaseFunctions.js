@@ -228,6 +228,7 @@ class GLScriptHandler
    }
  }
 */
+// i will put my update here
 class GlObj
 {
   constructor(gl, program, json, prop)
