@@ -238,9 +238,12 @@ class GlObj
        typeof obj != 'null')
     {
       this.data = obj;
-    }else
+    }else if(typeof obj == 'string')
     {
       this.data = JSON.parse(json);
+    } else
+    {
+      throw new Error('Object cannot be defined in ' + typeof obj);
     }
     if(!prop.options)
     {
