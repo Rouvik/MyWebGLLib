@@ -230,11 +230,21 @@ class GLScriptHandler
 */
 class GlObj
 {
-  constructor(gl, program, json, prop)
+  constructor(gl, program, obj, prop)
   {
     this.gl = gl;
     this.program = program;
-    this.data = JSON.parse(json);
+    if(typeof obj == 'object' &&
+       typeof obj !== null)
+    {
+      this.data = obj;
+    }else if(typeof obj == 'string')
+    {
+      this.data = JSON.parse(obj);
+    } else
+    {
+      throw new Error('Object cannot be defined in ' + typeof obj);
+    }
     if(!prop.options)
     {
       prop.options = {
