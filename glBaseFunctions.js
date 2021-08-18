@@ -228,14 +228,20 @@ class GLScriptHandler
    }
  }
 */
-// i will put my update here
 class GlObj
 {
-  constructor(gl, program, json, prop)
+  constructor(gl, program, obj, prop)
   {
     this.gl = gl;
     this.program = program;
-    this.data = JSON.parse(json);
+    if(typeof obj == 'object' &&
+       typeof obj != 'null')
+    {
+      this.data = obj;
+    }else
+    {
+      this.data = JSON.parse(json);
+    }
     if(!prop.options)
     {
       prop.options = {
