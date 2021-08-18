@@ -235,7 +235,7 @@ class GlObj
     this.gl = gl;
     this.program = program;
     if(typeof obj == 'object' &&
-       typeof obj != 'null')
+       typeof obj !== null)
     {
       this.data = obj;
     }else if(typeof obj == 'string')
