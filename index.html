@@ -13,7 +13,7 @@
 </body>
 <script type="text/v-shader">
   attribute vec3 pos;
-  
+  attribute vec2 texpos;
   mat3 rotate(float angle, vec3 dir)
 {
   float sin = sin(radians(angle)),
@@ -52,30 +52,42 @@
   }
 }
   vec3 posn;
+  varying vec2 texCoord;
   void main(void)
   {
-    posn = pos * rotate(10.0, vec3(0, 0, 1));
+    posn = pos * rotate(0.0, vec3(0, 0, 1));
     gl_Position = vec4(posn, 10.0);
+    texCoord = texpos;
   }
 </script>
 <script type="text/f-shader">
 precision highp float;
+
 vec3 greyscale(vec3 x)
 {
   float grey = (x.r + x.g + x.b) / 3.0;
-  x.r = grey;
-  x.b = grey;
-  x.g = grey;
+  x.r = x.b = x.g = grey;
   return x;
 }
-  void main(void)
-  {
-    vec3 color = vec3(1.0, 0.0, 0.0);
-    vec3 grey = greyscale(color);
-    gl_FragColor = vec4(grey, 1.0);
-  }
+
+vec3 negative(vec3 x)
+{
+  x.r = 1.0-x.r;
+  x.g = 1.0-x.g;
+  x.b = 1.0-x.b;
+  return x;
+}
+
+uniform sampler2D texture;
+varying vec2 texCoord;
+void main(void)
+{
+  vec4 color = texture2D(texture, texCoord);
+  vec4 processed = vec4(greyscale(color.rgb), color.a);
+  gl_FragColor = processed;
+}
 </script>
-<script src="basicCube.json"></script>
+<script src="texCube.json"></script>
 <script src="glBaseFunctions.js" type="text/javascript" charset="utf-8"></script>
 <script src="main.js" type="text/javascript" charset="utf-8"></script>
 </html>
