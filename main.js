@@ -12,6 +12,8 @@ gl.useProgram(program);
 gl.viewport(0, 0, sc.width, sc.height);
 gl.enable(gl.DEPTH_TEST);
 gl.clearColor(0, 0, 0, 1);
+gl.enable(gl.CULL_FACE);
+gl.cullFace(gl.FRONT);
 
 // init texture
 // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -42,10 +44,35 @@ let globj = new GlObj(gl, program, texCube, {
 });
 globj.init();
 
+// controls
+var px = 0, py = 0, vx = 0, vy = 0, angleX = 0, angleY = 0;
+document.addEventListener('touchstart',(event)=>
+{
+  px = event.touches[0].clientX;
+  py = event.touches[0].clientY;
+});
+document.addEventListener('touchmove',(event)=>
+{
+  vx = px - event.touches[0].clientX;
+  vy = py - event.touches[0].clientY;
+  let hyp = (vx**2 + vy**2)**0.5;
+  vx /= hyp;
+  vy /= hyp;
+});
+document.addEventListener('touchend',()=>
+{
+  vx = vy = 0;
+});
+let angloc = gl.getUniformLocation(program, 'angle');
+
+// animation loop
 function animate()
 {
   gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniform2f(angloc, angleY, angleX);
   globj.draw();
+  angleX += vx;
+  angleY += vy;
   requestAnimationFrame(animate);
 }
 animate();

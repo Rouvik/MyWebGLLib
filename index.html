@@ -14,6 +14,7 @@
 <script type="text/v-shader">
   attribute vec3 pos;
   attribute vec2 texpos;
+  uniform vec2 angle;
   mat3 rotate(float angle, vec3 dir)
 {
   float sin = sin(radians(angle)),
@@ -55,7 +56,8 @@
   varying vec2 texCoord;
   void main(void)
   {
-    posn = pos * rotate(0.0, vec3(0, 0, 1));
+    posn = pos * rotate(angle.x, vec3(1, 0, 0));
+    posn = posn * rotate(angle.y, vec3(0, 1, 0));
     gl_Position = vec4(posn, 10.0);
     texCoord = texpos;
   }
