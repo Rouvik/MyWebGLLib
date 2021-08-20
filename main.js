@@ -11,7 +11,7 @@ gl.useProgram(program);
 // setup gl
 gl.viewport(0, 0, sc.width, sc.height);
 gl.enable(gl.DEPTH_TEST);
-gl.clearColor(0, 0, 0, 1);
+gl.clearColor(1, 0, 0, 1);
 
 let globj = new GlObj(gl, program, basicCube, {
   list:{
