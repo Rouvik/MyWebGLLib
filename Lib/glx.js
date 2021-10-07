@@ -234,17 +234,7 @@ class GlObj
   {
     this.gl = gl;
     this.program = program;
-    if(typeof obj == 'object' &&
-       typeof obj !== null)
-    {
-      this.data = obj;
-    }else if(typeof obj == 'string')
-    {
-      this.data = JSON.parse(obj);
-    } else
-    {
-      throw new Error('Object cannot be defined in ' + typeof obj);
-    }
+    this.setData(obj);
     if(!prop.options)
     {
       prop.options = {
@@ -271,4 +261,21 @@ class GlObj
     this.init = new Function(func);
     this.draw = new Function('this.gl.drawElements(this.gl.TRIANGLES,'+this.data[indexName].length+','+this.gl.UNSIGNED_BYTE+',0);');
   }
+  
+  // sets data to the object
+  setData(obj)
+  {
+    if(typeof obj == 'object' &&
+       typeof obj !== null)
+    {
+      this.data = obj;
+    }else if(typeof obj == 'string')
+    {
+      this.data = JSON.parse(obj);
+    } else
+    {
+      throw new Error('Object cannot be defined in ' + typeof obj);
+    }
+  }
 }
+
