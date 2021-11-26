@@ -1,23 +1,20 @@
 // init screen
-const sc = document.querySelector('canvas'),
-      gl = sc.getContext('webgl');
-sc.width = sc.height = window.innerWidth;
+const win = new GlWindow(window.innerWidth, window.innerWidth);
 
-// handle gl scripts
-const glh = new GLScriptHandler(gl);
+// handle win.gl scripts
+const glh = new GLScriptHandler(win.gl);
 let program = glh.makeProgramFromPair(glh.pairShaders());
-gl.useProgram(program);
+win.gl.useProgram(program);
 
 // setup gl
-gl.viewport(0, 0, sc.width, sc.height);
-gl.enable(gl.DEPTH_TEST);
-gl.clearColor(0, 0, 0, 1);
-gl.enable(gl.CULL_FACE);
-gl.cullFace(gl.FRONT);
+win.gl.enable(win.gl.DEPTH_TEST);
+win.gl.clearColor(0, 0, 0, 1);
+win.gl.enable(win.gl.CULL_FACE);
+win.gl.cullFace(win.gl.FRONT);
 
 // init texture
-// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-GlobalGL.setSamplersWithImages(gl, [
+// win.gl.pixelStorei(win.gl.UNPACK_FLIP_Y_WEBGL, true);
+GlobalGL.setSamplersWithImages(win.gl, [
   {
     url: './img.png',
     number: 0,
@@ -25,8 +22,9 @@ GlobalGL.setSamplersWithImages(gl, [
   }
 ], program);
 
-// init object
-let globj = new GlObj(gl, program, texCube, {
+// init objects
+let objects = [];
+let globj = new GlObj(win.gl, program, texCube, {
   list:{
     vertices:{
       size: 3,
@@ -42,37 +40,63 @@ let globj = new GlObj(gl, program, texCube, {
     }
   }
 });
+
+for(let i = 0; i < 10; i++) {
+  objects.push({
+    x: (Math.random() * 30) - 14,
+    y: (Math.random() * 30) - 14,
+    z: (Math.random() * 100) + 10
+  });
+}
 globj.init();
 
 // controls
-var px = 0, py = 0, vx = 0, vy = 0, angleX = 0, angleY = 0;
-document.addEventListener('touchstart',(event)=>
-{
-  px = event.touches[0].clientX;
-  py = event.touches[0].clientY;
-});
-document.addEventListener('touchmove',(event)=>
-{
+var px = 0, py = 0,
+    vx = 0, vy = 0,
+    angleX = 0, angleY = 0;
+
+win.setCursorListener((event) => {
   vx = px - event.touches[0].clientX;
   vy = py - event.touches[0].clientY;
   let hyp = (vx**2 + vy**2)**0.5;
   vx /= hyp;
   vy /= hyp;
-});
-document.addEventListener('touchend',()=>
-{
+}, (event) => {
+  px = event.touches[0].clientX;
+  py = event.touches[0].clientY;
+}, (event) => {
   vx = vy = 0;
 });
-let angloc = gl.getUniformLocation(program, 'angle');
+
+let angloc = win.gl.getUniformLocation(program, 'angle'),
+    transloc = win.gl.getUniformLocation(program, 'translate'),
+    proj = win.gl.getUniformLocation(program, 'projection'),
+    fps = {
+      disp: document.getElementById('fptxt'),
+      value: 0
+    };
+
+let fov = GlobalGL.getFOVMatrix(45, win.height / win.width, 500, 1);
 
 // animation loop
 function animate()
 {
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.uniform2f(angloc, angleY, angleX);
-  globj.draw();
+  win.gl.clear(win.gl.COLOR_BUFFER_BIT);
+  win.gl.uniformMatrix4fv(proj, false, fov);
+  win.gl.uniform2f(angloc, 0, 0);
+  for(let obj of objects) {
+    win.gl.uniform3f(transloc, obj.x - angleX, obj.y, obj.z - angleY);
+    globj.draw();
+  }
   angleX += vx;
   angleY += vy;
+  fps.value ++;
   requestAnimationFrame(animate);
 }
+
+setInterval(()=>{
+  fps.disp.value = fps.value;
+  fps.value = 0;
+}, 1000);
+
 animate();

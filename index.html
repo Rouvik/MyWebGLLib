@@ -7,56 +7,59 @@
     <title>Window</title>
 </head>
 <body>
-  <canvas></canvas>
+  <input type="text" id="fptxt">
 </body>
 <script type="text/v-shader">
   attribute vec3 pos;
   attribute vec2 texpos;
+  uniform vec3 translate;
   uniform vec2 angle;
+  uniform mat4 projection;
+  
   mat3 rotate(float angle, vec3 dir)
-{
-  float sin = sin(radians(angle)),
-        cos = cos(radians(angle));
-  if(dir.x == 1.0)
   {
-    return mat3(
-      1, 0, 0,
-      0, cos, -sin,
-      0, sin, cos
-    );
-  }
-  else if(dir.y == 1.0)
-  {
-    return mat3(
-      cos, 0, sin,
-      0, 1, 0,
-      -sin, 0, cos
-    );
-  }
-  else if(dir.z == 1.0)
-  {
-    return mat3(
-      cos, -sin, 0,
-      sin, cos, 0,
-      0, 0, 1
-    );
-  }
-  else
-  {
-    return mat3(
-      1, 0, 0,
-      0, 1, 0,
-      0, 0, 1
+    float sin = sin(radians(angle)),
+          cos = cos(radians(angle));
+    if(dir.x == 1.0)
+    {
+      return mat3(
+        1, 0, 0,
+        0, cos, -sin,
+        0, sin, cos
       );
+    }
+    else if(dir.y == 1.0)
+    {
+      return mat3(
+        cos, 0, sin,
+        0, 1, 0,
+        -sin, 0, cos
+      );
+    }
+    else if(dir.z == 1.0)
+    {
+      return mat3(
+        cos, -sin, 0,
+        sin, cos, 0,
+        0, 0, 1
+      );
+    }
+    else
+    {
+      return mat3(
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+        );
+    }
   }
-}
   vec3 posn;
   varying vec2 texCoord;
   void main(void)
   {
     posn = pos * rotate(angle.x, vec3(1, 0, 0));
     posn = posn * rotate(angle.y, vec3(0, 1, 0));
-    gl_Position = vec4(posn, 10.0);
+    gl_Position = (vec4(posn, 30.0) + vec4(translate, 0.0)) * projection;
     texCoord = texpos;
   }
 </script>

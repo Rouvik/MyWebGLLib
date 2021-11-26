@@ -287,6 +287,7 @@ class matrix
   {
     return this.val;
   }
+  
   set value(v) //sets value to matrix
   {
     if (v.length && v[0].length)
@@ -296,17 +297,24 @@ class matrix
         {
           if (typeof v[i][j] != 'number')
           {
-            this.err('Error: The given matrix contains non numeral values');
+            console.error('Error: The given matrix contains non numeral values');
             return;
           }
-
         }
       this.val = v;
+      this.rows = v.length;
+      this.cols = v[0].length;
     } else
     {
-      this.err('Error: The given value is not a matrix');
+      console.error('Error: The given value is not a matrix');
       return;
     }
+  }
+  
+  set val(value) {
+    this.rows = value.length;
+    this.cols = value[0].length;
+    this.val = value;
   }
   
   get rows() //returns no. of rows of the matrix
@@ -351,13 +359,17 @@ class matrix
   	  }
     }
   }
+  
   //METHODS
   //Special methods---
-  sanitize(value = 0) //replaces non numeral values and NaNs from matrix according to argument[by default it is 0]
+  
+  // replaces non numeral values and NaNs from
+  // matrix according to argument[by default it is 0]
+  sanitize(value = 0)
   {
     if (typeof value != 'number')
     {
-      this.err('Error: Only numbers allowed in matrix');
+      console.error('Error: Only numbers allowed in matrix');
       return;
     }
     for (let i = 0; i < this.val.length; i++)
@@ -366,7 +378,9 @@ class matrix
           typeof this.val[i][j] != 'number')
           this.val[i][j] = value;
   }
-  check(m) //checks for non numeral values in matrix
+  
+  // checks for non numeral values in matrix
+  check(m)
   {
     for (let i = 0; i < m.val.length; i++)
       for (let j = 0; j < m.val[i].length; j++)
@@ -376,25 +390,32 @@ class matrix
       }
     return true;
   }
-  fill(value) //fills the matrix with a no.
+  
+  // fills the matrix with a number
+  fill(value)
   {
     if (typeof value != 'number')
     {
-      this.err('Error: Only numbers allowed');
+      console.error('Error: Only numbers allowed');
       return;
     }
     for (let x of this.val)
       x.fill(value);
   }
-  copy() //returns copy of a matrix
+  
+  // returns copy of a matrix
+  copy()
   {
-    let array = new matrix(this.val.length, this.val[0].length);
+    
+    /*let array = new matrix(this.val.length, this.val[0].length);
     for (let i = 0; i < this.val.length; i++)
       for (let j = 0; j < this.val[i].length; j++)
         array.val[i][j] = this.val[i][j];
-    return array;
+    return array;*/
   }
-  toString() //returns string representation of a matrix
+  
+  // returns string representation of a matrix
+  toString()
   {
     let str = '';
     for (let x of this.val)
@@ -405,7 +426,9 @@ class matrix
     }
     return str;
   }
-  toOneDim() //returns array representation of matrix
+  
+  // returns array representation of matrix
+  toOneDim()
   {
     let array = [];
     for (let x of this.val)
@@ -413,8 +436,11 @@ class matrix
         array.push(y);
     return array;
   }
+  
   //Mathematical methods---
-  sum() //adds up data and returns it
+  
+  //adds up data and returns it
+  sum()
   {
     let sum = 0;
     for (let x of this.val)
@@ -422,7 +448,9 @@ class matrix
         sum += y;
     return sum;
   }
-  product() //multiplies up data and returns it
+  
+ //multiplies up data and returns it
+  product()
   {
     let product = 1;
     for (let x of this.val)
@@ -430,9 +458,10 @@ class matrix
         product *= y;
     return product;
   }
-  add(value) //adds a value or matrix to the matrix
+  
+  // adds a value or matrix to the matrix
+  add(value)
   {
-
     if (typeof value == 'number')
     {
       for (let i = 0; i < this.val.length; i++)
@@ -446,11 +475,13 @@ class matrix
           this.val[i][j] += value.val[i][j];
     } else
     {
-      this.err('Error: Only numbers or matrixes allowed');
+      console.error('Error: Only numbers or matrixes allowed');
       return;
     }
   }
-  subtract(value) //subtracts a value or matrix to the matrix
+  
+  // subtracts a value or matrix to the matrix
+  subtract(value)
   {
     if (typeof value == 'number')
     {
@@ -465,11 +496,13 @@ class matrix
           this.val[i][j] -= value.val[i][j];
     } else
     {
-      this.err('Error: Only numbers or matrixes allowed');
+      console.error('Error: Only numbers or matrixes allowed');
       return;
     }
   }
-  multiply(value) //multiplies a value or matrix to the matrix
+  
+  // multiplies a value or matrix to the matrix
+  multiply(value)
   {
     if (typeof value == 'number')
     {
@@ -484,11 +517,13 @@ class matrix
           this.val[i][j] *= value.val[i][j];
     } else
     {
-      this.err('Error: Only numbers or matrixes allowed');
+      console.error('Error: Only numbers or matrixes allowed');
       return;
     }
   }
-  divide(value) //divides a value or matrix to the matrix
+  
+  // divides a value or matrix to the matrix
+  divide(value)
   {
     if (typeof value == 'number')
     {
@@ -503,11 +538,13 @@ class matrix
           this.val[i][j] /= value.val[i][j];
     } else
     {
-      this.err('Error: Only numbers or matrixes allowed');
+      console.error('Error: Only numbers or matrixes allowed');
       return;
     }
   }
-  matrixMultiply(m) //does matrix multiplication of 2 matrixes and returns a new matrix object
+  
+  // does matrix multiplication of 2 matrixes and returns a new matrix object
+  matrixMultiply(m)
   {
     if (m.val[0].length == this.val.length)
     {
@@ -525,9 +562,5 @@ class matrix
       return m3;
     } else
       console.warn('Warn: Rows of m1 != cols of m2...proceeding');
-  }
-  err(message)
-  {
-    console.log('%c' + message, 'background:#FF0000;color:#FFFFFF;font-family:courier;font-weight:bold;');
   }
 }
