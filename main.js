@@ -30,6 +30,10 @@ let globj = new GlObj(win.gl, program, texCube, {
       size: 3,
       name: 'pos'
     },
+    normals: {
+      size: 3,
+      name: 'norm'
+    },
     texCoord:{
       size: 2,
       name: 'texpos'
@@ -53,7 +57,9 @@ globj.init();
 // controls
 var px = 0, py = 0,
     vx = 0, vy = 0,
-    angleX = 0, angleY = 0;
+    angleX = 0, angleY = 0,
+    transX = 0, transY = 0,
+    type = false;
 
 win.setCursorListener((event) => {
   vx = px - event.touches[0].clientX;
@@ -64,8 +70,10 @@ win.setCursorListener((event) => {
 }, (event) => {
   px = event.touches[0].clientX;
   py = event.touches[0].clientY;
+  type = px < win.width / 2;
 }, (event) => {
   vx = vy = 0;
+  type = false;
 });
 
 let angloc = win.gl.getUniformLocation(program, 'angle'),
@@ -83,13 +91,19 @@ function animate()
 {
   win.gl.clear(win.gl.COLOR_BUFFER_BIT);
   win.gl.uniformMatrix4fv(proj, false, fov);
-  win.gl.uniform2f(angloc, 0, 0);
+  win.gl.uniform2f(angloc, angleY, angleX);
   for(let obj of objects) {
-    win.gl.uniform3f(transloc, obj.x - angleX, obj.y, obj.z - angleY);
+    win.gl.uniform3f(transloc, obj.x - transX, obj.y, obj.z - transY);
     globj.draw();
   }
-  angleX += vx;
-  angleY += vy;
+  
+  if(type) {
+    transX += vx;
+    transY += vy;
+  } else {
+    angleX += vx;
+    angleY += vy;
+  }
   fps.value ++;
   requestAnimationFrame(animate);
 }
