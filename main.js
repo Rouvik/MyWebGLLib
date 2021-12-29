@@ -65,8 +65,8 @@ win.setCursorListener((event) => {
   vx = px - event.touches[0].clientX;
   vy = py - event.touches[0].clientY;
   let hyp = (vx**2 + vy**2)**0.5;
-  vx /= hyp;
-  vy /= hyp;
+  vx /= hyp / 2;
+  vy /= hyp / 2;
 }, (event) => {
   px = event.touches[0].clientX;
   py = event.touches[0].clientY;
@@ -93,7 +93,7 @@ function animate()
   win.gl.uniformMatrix4fv(proj, false, fov);
   win.gl.uniform2f(angloc, angleY, angleX);
   for(let obj of objects) {
-    win.gl.uniform3f(transloc, obj.x - transX, obj.y, obj.z - transY);
+    win.gl.uniform3f(transloc, transX - obj.x, obj.y, obj.z - transY);
     globj.draw();
   }
   
